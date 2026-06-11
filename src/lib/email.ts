@@ -4,8 +4,8 @@ const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY)
   : null;
 
-const FROM = process.env.EMAIL_FROM || "hello@architectureai.com";
-const ADMIN = process.env.ADMIN_EMAIL || "team@architectureai.com";
+const FROM = process.env.EMAIL_FROM!;
+const ADMIN = process.env.ADMIN_EMAIL!;
 
 /** Confirmation email sent to the subscriber */
 export async function sendConfirmationEmail(to: string, name: string) {
