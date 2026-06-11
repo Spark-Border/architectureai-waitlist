@@ -34,7 +34,7 @@ export default function TopBar() {
         {/* Logo */}
         <motion.a
           href="#"
-          className="flex items-center gap-2.5 font-bold text-[2.05rem] tracking-[-0.02em] no-underline"
+          className="flex items-center gap-2.5 font-bold text-2xl sm:text-[2.05rem] tracking-[-0.02em] no-underline whitespace-nowrap"
           style={{ color: "var(--text)" }}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
@@ -46,7 +46,7 @@ export default function TopBar() {
         <div className="flex items-center gap-3">
           <motion.a
             href="#signup"
-            className="px-4 py-2 rounded-full border text-sm font-medium transition-colors duration-200 no-underline"
+            className="hidden sm:inline-flex px-4 py-2 rounded-full border text-sm font-medium transition-colors duration-200 no-underline whitespace-nowrap"
             style={{
               borderColor: "var(--border)",
               color: "var(--text-soft)",

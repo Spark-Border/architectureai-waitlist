@@ -58,7 +58,7 @@ export default function Hero() {
           initial="hidden"
           animate="visible"
           variants={fadeUp}
-          className="text-5xl sm:text-6xl lg:text-[5rem] font-extrabold tracking-tighter leading-[1.05] mb-8"
+          className="text-4xl sm:text-5xl md:text-6xl lg:text-[5rem] font-extrabold tracking-tighter leading-[1.05] mb-8"
           style={{ color: "var(--text)" }}
         >
           Enterprise Architecture,
