@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface WaitlistEntry {
@@ -67,7 +67,7 @@ export default function AdminPage() {
     }
   }, []);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     fetchEntries(token.trim());
   };
@@ -173,78 +173,9 @@ export default function AdminPage() {
         </div>
 
         <div className="flex flex-col gap-3">
-          {entries.map((entry) => {
-            const isOpen = expanded.has(entry._id);
-            return (
-              <motion.div
-                key={entry._id}
-                layout
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
-                className="rounded-xl border border-[#1a1f35] bg-[#111627] overflow-hidden"
-              >
-                <button
-                  onClick={() => toggleExpand(entry._id)}
-                  className="w-full text-left px-5 py-4 flex items-center gap-4 cursor-pointer hover:bg-[#111627]/80 transition-colors"
-                >
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-semibold text-white truncate">
-                        {entry.firstName} {entry.lastName}
-                      </span>
-                      <span className="text-[0.65rem] px-2 py-0.5 rounded-full bg-[rgba(88,124,255,0.1)] text-[#7b98ff] font-medium">
-                        {interestLabels[entry.interest] || entry.interest}
-                      </span>
-                    </div>
-                    <p className="text-xs text-[#6e7388] mt-0.5 truncate">
-                      {entry.email}{entry.orgName ? ` · ${entry.orgName}` : ""}
-                    </p>
-                  </div>
-                  <span className="text-[0.68rem] text-[#3a3f55] whitespace-nowrap">
-                    {new Date(entry.createdAt).toLocaleDateString("en-GB", {
-                      day: "numeric",
-                      month: "short",
-                    })}
-                  </span>
-                  <motion.span
-                    animate={{ rotate: isOpen ? 180 : 0 }}
-                    className="text-[#6e7388] text-xs"
-                  >
-                    ▼
-                  </motion.span>
-                </button>
-
-                <AnimatePresence>
-                  {isOpen && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.25 }}
-                      className="overflow-hidden"
-                    >
-                      <div className="px-5 pb-5 grid grid-cols-2 gap-x-8 gap-y-2 text-xs border-t border-[#1a1f35] pt-4 mx-5">
-                        <Row label="Email" value={entry.email} />
-                        <Row label="Organisation" value={entry.orgName || "—"} />
-                        <Row label="Job title" value={entry.jobTitle || "—"} />
-                        <Row label="Industry" value={entry.industry || "—"} />
-                        <Row label="Frameworks" value={entry.frameworks.join(", ") || "—"} />
-                        <Row label="Signed up" value={new Date(entry.createdAt).toLocaleString()} />
-                        {/* Pain points gets full width */}
-                        {entry.painPoints && (
-                          <div className="col-span-2 mt-2">
-                            <span className="text-[#3a3f55]">Pain points</span>
-                            <p className="text-[#b4bac8] mt-1 italic leading-relaxed">{entry.painPoints}</p>
-                          </div>
-                        )}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </motion.div>
-            );
-          })}
+          {entries.map((entry) => (
+            <EntryCard key={entry._id} entry={entry} expanded={expanded} toggleExpand={toggleExpand} />
+          ))}
         </div>
 
         {entries.length === 0 && !loading && (
@@ -255,20 +186,91 @@ export default function AdminPage() {
   );
 }
 
+function EntryCard({ entry, expanded, toggleExpand }: Readonly<{ entry: WaitlistEntry, expanded: Set<string>, toggleExpand: (id: string) => void }>) {
+  const isOpen = expanded.has(entry._id);
+  return (
+    <motion.div
+      layout
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className="rounded-xl border border-[#1a1f35] bg-[#111627] overflow-hidden"
+    >
+      <button
+        onClick={() => toggleExpand(entry._id)}
+        className="w-full text-left px-5 py-4 flex items-center gap-4 cursor-pointer hover:bg-[#111627]/80 transition-colors"
+      >
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-semibold text-white truncate">
+              {entry.firstName} {entry.lastName}
+            </span>
+            <span className="text-[0.65rem] px-2 py-0.5 rounded-full bg-[rgba(88,124,255,0.1)] text-[#7b98ff] font-medium">
+              {interestLabels[entry.interest] || entry.interest}
+            </span>
+          </div>
+          <p className="text-xs text-[#6e7388] mt-0.5 truncate">
+            {entry.email}{entry.orgName ? ` · ${entry.orgName}` : ""}
+          </p>
+        </div>
+        <span className="text-[0.68rem] text-[#3a3f55] whitespace-nowrap">
+          {new Date(entry.createdAt).toLocaleDateString("en-GB", {
+            day: "numeric",
+            month: "short",
+          })}
+        </span>
+        <motion.span
+          animate={{ rotate: isOpen ? 180 : 0 }}
+          className="text-[#6e7388] text-xs"
+        >
+          ▼
+        </motion.span>
+      </button>
+
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            className="overflow-hidden"
+          >
+            <div className="px-5 pb-5 grid grid-cols-2 gap-x-8 gap-y-2 text-xs border-t border-[#1a1f35] pt-4 mx-5">
+              <Value label="Email" value={entry.email} />
+              <Value label="Organisation" value={entry.orgName || "—"} />
+              <Value label="Job title" value={entry.jobTitle || "—"} />
+              <Value label="Industry" value={entry.industry || "—"} />
+              <Value label="Frameworks" value={entry.frameworks.join(", ") || "—"} />
+              <Value label="Signed up" value={new Date(entry.createdAt).toLocaleString()} />
+              {entry.painPoints && (
+                <div className="col-span-2 mt-2">
+                  <span className="text-[#3a3f55]">Pain points</span>
+                  <p className="text-[#b4bac8] mt-1 italic leading-relaxed">{entry.painPoints}</p>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  );
+}
+
 function StatCard({
   label,
   value,
   color,
   emoji,
-}: {
+}: Readonly<{
   label: string;
   value: number;
   color?: string;
   emoji?: string;
-}) {
+}>) {
   return (
     <div className="p-5 rounded-xl border border-[#1a1f35] bg-[#111627]">
-      <p className="text-[0.68rem] text-[#6e7388] uppercase tracking-[0.05em] mb-1">
+      <p className="text-[0.68rem] text-[#6e7388] uppercase tracking-wider mb-1">
         {emoji ? `${emoji} ` : ""}{label}
       </p>
       <p className="text-2xl font-extrabold text-white tracking-[-0.02em]" style={{ color: color || "#fff" }}>
@@ -278,7 +280,7 @@ function StatCard({
   );
 }
 
-function Row({ label, value }: { label: string; value: string }) {
+function Value({ label, value }: Readonly<{ label: string; value: React.ReactNode }>) {
   return (
     <div>
       <span className="text-[#3a3f55]">{label}</span>

@@ -16,9 +16,9 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   return (
     <html lang="en" className="scroll-smooth" suppressHydrationWarning>
       <body className="antialiased" suppressHydrationWarning>
@@ -30,7 +30,7 @@ export default function RootLayout({
             <div className="absolute top-[-30%] left-[-10%] w-[55%] h-[55%] bg-[radial-gradient(ellipse,rgba(88,124,255,0.07)_0%,transparent_70%)] animate-[ambientA_18s_ease-in-out_infinite]" />
             <div className="absolute bottom-[-25%] right-[-8%] w-[50%] h-[50%] bg-[radial-gradient(ellipse,rgba(52,211,153,0.05)_0%,transparent_70%)] animate-[ambientB_22s_ease-in-out_infinite]" />
           </div>
-          <div className="relative z-[1]">{children}</div>
+          <div className="relative z-1 flex flex-col min-h-screen">{children}</div>
         </ThemeProvider>
       </body>
     </html>

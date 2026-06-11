@@ -17,7 +17,10 @@ export default function ThemeToggle() {
   const [open, setOpen] = useState(false);
 
   // Avoid hydration mismatch — only render after mount
-  useEffect(() => setMounted(true), []);
+  useEffect(() => {
+    const timer = setTimeout(() => setMounted(true), 0);
+    return () => clearTimeout(timer);
+  }, []);
   if (!mounted) {
     return (
       <div className="w-9 h-9 rounded-full border bg-transparent animate-pulse"
@@ -61,9 +64,13 @@ export default function ThemeToggle() {
         {open && (
           <>
             {/* Backdrop */}
-            <div
-              className="fixed inset-0 z-[998]"
+            <button
+              className="fixed inset-0 z-998 cursor-default border-none outline-none bg-transparent w-full h-full p-0 m-0"
               onClick={() => setOpen(false)}
+              onKeyDown={(e) => {
+                if (e.key === "Escape" || e.key === "Enter") setOpen(false);
+              }}
+              aria-label="Close menu"
             />
             {/* Dropdown */}
             <motion.div
@@ -71,7 +78,7 @@ export default function ThemeToggle() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -8, scale: 0.96 }}
               transition={{ duration: 0.18, ease: "easeOut" }}
-              className="absolute right-0 top-12 z-[999] w-36 rounded-xl border shadow-xl overflow-hidden"
+              className="absolute right-0 top-12 z-999 w-36 rounded-xl border shadow-xl overflow-hidden"
               style={{
                 background: "var(--surface)",
                 borderColor: "var(--border-dim)",

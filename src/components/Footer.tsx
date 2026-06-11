@@ -9,7 +9,7 @@ export default function Footer() {
       whileInView={{ opacity: 1 }}
       viewport={{ once: true }}
       transition={{ duration: 0.5 }}
-      className="max-w-[1100px] mx-auto px-4 sm:px-6 py-6 sm:py-8 border-t flex justify-center items-center gap-3 sm:gap-4 text-[0.78rem] text-center"
+      className="max-w-275 mx-auto px-4 sm:px-6 py-6 sm:py-8 border-t flex justify-center items-center gap-3 sm:gap-4 text-[0.78rem] text-center"
       style={{ borderColor: "var(--border-dim)", color: "var(--text-muted)" }}
     >
       <span>© 2026 ArchitectureAI</span>

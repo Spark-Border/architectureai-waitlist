@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 import { useRef } from "react";
 
 const fadeUp = {
@@ -14,13 +14,6 @@ const fadeUp = {
 
 export default function Hero() {
   const heroRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: heroRef,
-    offset: ["start start", "end start"],
-  });
-
-  const illustrationY = useTransform(scrollYProgress, [0, 1], [0, 150]);
-  const illustrationOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
   return (
     <section
@@ -28,7 +21,7 @@ export default function Hero() {
       className="relative w-full overflow-hidden flex flex-col items-center pt-32 sm:pt-40 lg:pt-48 pb-16 sm:pb-24 lg:pb-32 px-4 sm:px-6"
     >
       {/* Background ambient glow behind the text */}
-      <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gradient-to-b from-[var(--accent)] to-transparent opacity-10 blur-[120px] pointer-events-none rounded-full" />
+      <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-200 h-100 bg-linear-to-b from-(--accent) to-transparent opacity-10 blur-[120px] pointer-events-none rounded-full" />
 
       {/* Text Content */}
       <div className="relative z-20 flex flex-col items-center text-center max-w-4xl mx-auto">
@@ -38,7 +31,7 @@ export default function Hero() {
           initial="hidden"
           animate="visible"
           variants={fadeUp}
-          className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full border text-[0.85rem] font-medium tracking-wide mb-8 shadow-sm backdrop-blur-md"
+          className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border text-[0.8rem] sm:text-sm font-medium mb-6 sm:mb-8 tracking-tight transition-colors hover:bg-white/5"
           style={{
             background: "color-mix(in srgb, var(--accent) 12%, transparent)",
             borderColor: "color-mix(in srgb, var(--accent) 25%, transparent)",
@@ -49,7 +42,7 @@ export default function Hero() {
             className="w-1.5 h-1.5 rounded-full animate-[pulseDot_2s_ease-in-out_infinite]"
             style={{ background: "var(--accent-lit)", boxShadow: "0 0 10px var(--accent-lit)" }}
           />
-          Something big is coming
+          {" "}Something big is coming
         </motion.div>
 
         {/* H1 */}
@@ -64,7 +57,7 @@ export default function Hero() {
           Enterprise Architecture,
           <br className="hidden sm:block" />
           rebuilt with{" "}
-          <span className="bg-gradient-to-r from-[#7b98ff] via-[#a78bfa] to-[#ff8bf0] bg-clip-text text-transparent">
+          <span className="bg-linear-to-r from-[#7b98ff] via-[#a78bfa] to-[#ff8bf0] bg-clip-text text-transparent">
             AI-native
           </span>{" "}
           intelligence.
@@ -131,9 +124,9 @@ export default function Hero() {
         transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.4 }}
         className="relative z-10 w-full max-w-[1200px] mt-16 sm:mt-24"
       >
-        <div className="relative w-full rounded-2xl sm:rounded-[2rem] overflow-hidden border border-white/5 shadow-[0_0_100px_rgba(0,0,0,0.5)]">
+        <div className="relative w-full rounded-2xl sm:rounded-4xl overflow-hidden border border-white/5 shadow-[0_0_100px_rgba(0,0,0,0.5)]">
           {/* Glass overlay effect *
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[var(--ink)] opacity-60 z-10" />
+          <div className="absolute inset-0 bg-linear-to-b from-transparent to-(--ink) opacity-60 z-10" />
           
           <motion.img
             src="/hero-illustration.png"

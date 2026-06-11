@@ -10,7 +10,7 @@ interface CardProps {
   index: number;
 }
 
-function Card({ icon, title, body, index }: CardProps) {
+function Card({ icon, title, body, index }: Readonly<CardProps>) {
   const ref = useRef<HTMLDivElement>(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -47,7 +47,7 @@ function Card({ icon, title, body, index }: CardProps) {
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       className="p-7 rounded-2xl border cursor-default transition-shadow duration-300 hover:shadow-[0_24px_64px_rgba(0,0,0,0.15)] sm:col-span-1"
-      whileHover={{ borderColor: "var(--border)" } as any}
+      whileHover={{ borderColor: "var(--border)" }}
     >
       <div
         className="w-10 h-10 rounded-[10px] flex items-center justify-center text-[1.15rem] mb-4"
@@ -122,7 +122,7 @@ export default function FeaturesBento() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.5 }}
-        className="text-[0.75rem] font-semibold uppercase tracking-[0.08em] max-w-[1100px] mx-auto px-6 mb-5"
+        className="text-[0.75rem] font-semibold uppercase tracking-[0.08em] max-w-275 mx-auto px-6 mb-5"
         style={{ color: "var(--accent-lit)" }}
       >
         What we&apos;re building
@@ -133,7 +133,7 @@ export default function FeaturesBento() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.5, delay: 0.08 }}
-        className="text-[clamp(1.7rem,3vw,2.1rem)] font-bold tracking-[-0.025em] leading-tight max-w-[1100px] mx-auto px-6 mb-12"
+        className="text-[clamp(1.7rem,3vw,2.1rem)] font-bold tracking-tight leading-tight max-w-275 mx-auto px-6 mb-12"
         style={{ color: "var(--text)" }}
       >
         An operating system for the
@@ -141,7 +141,7 @@ export default function FeaturesBento() {
         entire architecture lifecycle
       </motion.h2>
 
-      <div className="max-w-[1100px] mx-auto px-4 sm:px-6 lg:px-8 mb-20 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="max-w-275 mx-auto px-4 sm:px-6 mb-16 md:mb-20 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {cards.map((card) => (
           <Card key={card.index} {...card} />
         ))}

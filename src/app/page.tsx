@@ -1,7 +1,6 @@
 import TopBar from "@/components/TopBar";
 import Hero from "@/components/Hero";
 import TrustMarquee from "@/components/TrustMarquee";
-import AnimatedCounter from "@/components/AnimatedCounter";
 import FeaturesBento from "@/components/FeaturesBento";
 import WaitlistSection from "@/components/WaitlistSection";
 import Footer from "@/components/Footer";

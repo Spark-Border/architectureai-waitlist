@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useRef, FormEvent } from "react";
+import { useState, useRef, SyntheticEvent } from "react";
 import Confetti from "@/components/Confetti";
 
 interface FormData {
@@ -62,7 +62,7 @@ export default function WaitlistSection() {
 
   const formRef = useRef<HTMLFormElement>(null);
 
-  const updateField = (field: keyof FormData, value: string | string[]) => {
+  const updateField = (field: keyof FormData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) {
       setErrors((prev) => {
@@ -84,7 +84,7 @@ export default function WaitlistSection() {
     return Object.keys(errs).length === 0;
   };
 
-  const handleSubmit = async (e: FormEvent) => {
+  const handleSubmit = async (e: SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
 
@@ -109,15 +109,15 @@ export default function WaitlistSection() {
         throw new Error(data.error || "Something went wrong");
       }
       setSubmitted(true);
-    } catch (err: any) {
-      setError(err.message || "Something went wrong. Please try again.");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
     } finally {
       setSubmitting(false);
     }
   };
 
   return (
-    <section id="signup" className="max-w-[1100px] mx-auto px-6 pb-28">
+    <section id="signup" className="max-w-275 mx-auto px-6 pb-28">
       <div className="border-t pt-20" style={{ borderColor: "var(--border-dim)" }} />
 
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.15fr] gap-16 items-start">
@@ -129,7 +129,7 @@ export default function WaitlistSection() {
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] as const }}
         >
           <h2
-            className="text-[clamp(1.6rem,2.8vw,2rem)] font-bold tracking-[-0.025em] leading-tight mb-3"
+            className="text-[clamp(1.6rem,2.8vw,2rem)] font-bold tracking-tight leading-tight mb-3"
             style={{ color: "var(--text)" }}
           >
             Be first in line.
@@ -172,7 +172,7 @@ export default function WaitlistSection() {
                   className="sr-only"
                 />
                 <div
-                  className="w-5 h-5 rounded-full border-2 flex-shrink-0 mt-0.5 flex items-center justify-center transition-colors"
+                  className="w-5 h-5 rounded-full border-2 shrink-0 mt-0.5 flex items-center justify-center transition-colors"
                   style={{
                     borderColor:
                       interest === opt.value ? "var(--accent)" : "var(--border)",
@@ -309,8 +309,9 @@ export default function WaitlistSection() {
 
                 <form ref={formRef} onSubmit={handleSubmit} noValidate>
                   {/* Email */}
-                  <Field label="Work email" required error={errors.email}>
+                  <Field label="Work email" htmlFor="email" required error={errors.email}>
                     <input
+                      id="email"
                       type="email"
                       value={formData.email}
                       onChange={(e) => updateField("email", e.target.value)}
@@ -323,8 +324,9 @@ export default function WaitlistSection() {
 
                   {/* Name row */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <Field label="First name" required error={errors.firstName}>
+                    <Field label="First name" htmlFor="firstName" required error={errors.firstName}>
                       <input
+                        id="firstName"
                         type="text"
                         value={formData.firstName}
                         onChange={(e) => updateField("firstName", e.target.value)}
@@ -334,8 +336,9 @@ export default function WaitlistSection() {
                         style={inputStyle()}
                       />
                     </Field>
-                    <Field label="Last name" required error={errors.lastName}>
+                    <Field label="Last name" htmlFor="lastName" required error={errors.lastName}>
                       <input
+                        id="lastName"
                         type="text"
                         value={formData.lastName}
                         onChange={(e) => updateField("lastName", e.target.value)}
@@ -348,8 +351,9 @@ export default function WaitlistSection() {
                   </div>
 
                   {/* Organisation */}
-                  <Field label="Organisation">
+                  <Field label="Organisation" htmlFor="orgName">
                     <input
+                      id="orgName"
                       type="text"
                       value={formData.orgName}
                       onChange={(e) => updateField("orgName", e.target.value)}
@@ -361,8 +365,9 @@ export default function WaitlistSection() {
 
                   {/* Job title + Industry */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <Field label="Job title">
+                    <Field label="Job title" htmlFor="jobTitle">
                       <select
+                        id="jobTitle"
                         value={formData.jobTitle}
                         onChange={(e) => updateField("jobTitle", e.target.value)}
                         className={inputCls + " cursor-pointer appearance-none"}
@@ -385,8 +390,9 @@ export default function WaitlistSection() {
                         <option value="other">Other</option>
                       </select>
                     </Field>
-                    <Field label="Industry">
+                    <Field label="Industry" htmlFor="industry">
                       <select
+                        id="industry"
                         value={formData.industry}
                         onChange={(e) => updateField("industry", e.target.value)}
                         className={inputCls + " cursor-pointer appearance-none"}
@@ -415,8 +421,9 @@ export default function WaitlistSection() {
                   </div>
 
                   {/* Frameworks */}
-                  <Field label="Primary frameworks you use">
+                  <Field label="Primary frameworks you use" htmlFor="frameworks">
                     <select
+                      id="frameworks"
                       value={formData.frameworks}
                       onChange={(e) => updateField("frameworks", e.target.value)}
                       className={inputCls + " cursor-pointer appearance-none"}
@@ -440,13 +447,14 @@ export default function WaitlistSection() {
                   </Field>
 
                   {/* Pain points */}
-                  <Field label="What frustrates you most about architecture governance?">
+                  <Field label="What frustrates you most about architecture governance?" htmlFor="painPoints">
                     <textarea
+                      id="painPoints"
                       value={formData.painPoints}
                       onChange={(e) => updateField("painPoints", e.target.value)}
                       placeholder="Tell us about your current review process, bottlenecks, or anything you'd like us to know…"
                       rows={3}
-                      className={inputCls + " resize-y min-h-[88px]"}
+                      className={inputCls + " resize-y min-h-22"}
                       style={inputStyle()}
                     />
                   </Field>
@@ -455,24 +463,23 @@ export default function WaitlistSection() {
                   <motion.label
                     className="flex items-start gap-2.5 my-4 text-xs leading-relaxed cursor-pointer"
                     style={{ color: "var(--text-muted)" }}
-                    whileHover={{ color: "var(--text-soft)" } as any}
+                    whileHover={{ color: "var(--text-soft)" }}
                   >
                     <input
                       type="checkbox"
                       required
-                      className="mt-0.5 w-[15px] h-[15px] cursor-pointer accent-[#587cff]"
+                      className="mt-0.5 w-3.75 h-3.75 cursor-pointer accent-[#587cff]"
                     />
                     <span>
                       I agree to receive emails from ArchitectureAI and understand my
                       data will be handled per the{" "}
                       <a
-                        href="#"
+                        href="/privacy"
                         className="hover:underline"
                         style={{ color: "var(--accent-lit)" }}
                       >
                         Privacy Policy
-                      </a>
-                      . I can opt out anytime.
+                      </a>{" "}. I can opt out anytime.
                     </span>
                   </motion.label>
 
@@ -520,18 +527,21 @@ function inputStyle(): React.CSSProperties {
 /* Tiny field wrapper */
 function Field({
   label,
+  htmlFor,
   required,
   error,
   children,
-}: {
+}: Readonly<{
   label: string;
+  htmlFor?: string;
   required?: boolean;
   error?: string;
   children: React.ReactNode;
-}) {
+}>) {
   return (
     <div className="flex flex-col gap-1.5 mb-4">
       <label
+        htmlFor={htmlFor}
         className="text-[0.72rem] font-semibold uppercase tracking-[0.06em]"
         style={{ color: "var(--text-soft)" }}
       >
