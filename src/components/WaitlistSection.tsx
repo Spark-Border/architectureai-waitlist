@@ -80,6 +80,10 @@ export default function WaitlistSection() {
       errs.email = "Invalid email";
     if (!formData.firstName.trim()) errs.firstName = "Required";
     if (!formData.lastName.trim()) errs.lastName = "Required";
+    if (!formData.orgName.trim()) errs.orgName = "Required";
+    if (!formData.jobTitle.trim()) errs.jobTitle = "Required";
+    if (!formData.industry.trim()) errs.industry = "Required";
+    if (!formData.frameworks.trim()) errs.frameworks = "Required";
     setErrors(errs);
     return Object.keys(errs).length === 0;
   };
@@ -351,7 +355,7 @@ export default function WaitlistSection() {
                   </div>
 
                   {/* Organisation */}
-                  <Field label="Organisation" htmlFor="orgName">
+                  <Field label="Organisation" htmlFor="orgName" required error={errors.orgName}>
                     <input
                       id="orgName"
                       type="text"
@@ -365,7 +369,7 @@ export default function WaitlistSection() {
 
                   {/* Job title + Industry */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <Field label="Job title" htmlFor="jobTitle">
+                    <Field label="Job title" htmlFor="jobTitle" required error={errors.jobTitle}>
                       <select
                         id="jobTitle"
                         value={formData.jobTitle}
@@ -390,7 +394,7 @@ export default function WaitlistSection() {
                         <option value="other">Other</option>
                       </select>
                     </Field>
-                    <Field label="Industry" htmlFor="industry">
+                    <Field label="Industry" htmlFor="industry" required error={errors.industry}>
                       <select
                         id="industry"
                         value={formData.industry}
@@ -421,7 +425,7 @@ export default function WaitlistSection() {
                   </div>
 
                   {/* Frameworks */}
-                  <Field label="Primary frameworks you use" htmlFor="frameworks">
+                  <Field label="Primary frameworks you use" htmlFor="frameworks" required error={errors.frameworks}>
                     <select
                       id="frameworks"
                       value={formData.frameworks}

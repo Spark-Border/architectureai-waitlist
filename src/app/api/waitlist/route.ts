@@ -1,18 +1,18 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import Waitlist from "@/models/Waitlist";
-import { sendConfirmationEmail, sendAdminNotification } from "@/lib/email";
+import { sendAdminNotification } from "@/lib/email";
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
 
     /* ── Validate ── */
-    const { email, firstName, lastName, interest, consentedAt } = body;
+    const { email, firstName, lastName, interest, consentedAt, orgName, jobTitle, industry, frameworks } = body;
 
-    if (!email || !firstName || !lastName) {
+    if (!email || !firstName || !lastName || !orgName || !jobTitle || !industry || !frameworks || frameworks.length === 0) {
       return NextResponse.json(
-        { success: false, error: "Email, first name, and last name are required." },
+        { success: false, error: "Please fill out all required fields." },
         { status: 400 }
       );
     }
@@ -27,9 +27,18 @@ export async function POST(request: Request) {
     /* ── Persist ── */
     await connectDB();
 
+    const formattedEmail = email.toLowerCase().trim();
+    const existing = await Waitlist.findOne({ email: formattedEmail });
+    if (existing) {
+      return NextResponse.json(
+        { success: false, error: "This email is already on the waitlist." },
+        { status: 400 }
+      );
+    }
+
     try {
       const entry = await Waitlist.create({
-        email: email.toLowerCase().trim(),
+        email: formattedEmail,
         firstName: firstName.trim(),
         lastName: lastName.trim(),
         orgName: body.orgName?.trim() || "",
@@ -41,28 +50,21 @@ export async function POST(request: Request) {
         consentedAt: consentedAt ? new Date(consentedAt) : new Date(),
       });
 
-      /* ── Send emails (fire-and-forget) ── */
-      Promise.allSettled([
-        sendConfirmationEmail(entry.email, entry.firstName),
-        sendAdminNotification({
-          email: entry.email,
-          firstName: entry.firstName,
-          lastName: entry.lastName,
-          orgName: entry.orgName,
-          jobTitle: entry.jobTitle,
-          industry: entry.industry,
-          interest: entry.interest,
-          painPoints: entry.painPoints,
-          frameworks: entry.frameworks,
-        }),
-      ]);
+      /* ── Send emails ── */
+      await sendAdminNotification({
+        email: entry.email,
+        firstName: entry.firstName,
+        lastName: entry.lastName,
+        orgName: entry.orgName,
+        jobTitle: entry.jobTitle,
+        industry: entry.industry,
+        interest: entry.interest,
+        painPoints: entry.painPoints,
+        frameworks: entry.frameworks,
+      });
 
       return NextResponse.json({ success: true }, { status: 201 });
     } catch (err: unknown) {
-      if (err && typeof err === "object" && "code" in err && err.code === 11000) {
-        /* duplicate email — silently succeed so the user doesn't know */
-        return NextResponse.json({ success: true }, { status: 200 });
-      }
       throw err;
     }
   } catch (err: unknown) {
