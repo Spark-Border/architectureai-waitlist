@@ -1,0 +1,134 @@
+@import "tailwindcss";
+
+/* ─── Dark theme (default) ───────────────────────────── */
+:root {
+  --ink:         #080b14;
+  --ink-lift:    #0d1120;
+  --surface:     #111627;
+  --border-dim:  #1a1f35;
+  --border:      #222840;
+  --text:        #edf0f5;
+  --text-soft:   #b4bac8;
+  --text-muted:  #6e7388;
+  --placeholder: #3a3f55;
+  --accent:      #587cff;
+  --accent-lit:  #7b98ff;
+  --accent-dim:  #3e5cce;
+  --green:       #34d399;
+  --green-dim:   #1a4d3a;
+  --red:         #f87171;
+  --scrollbar-thumb: #222840;
+}
+
+/* ─── Light theme ────────────────────────────────────── */
+:root[data-theme="light"],
+.light {
+  --ink:         #f5f6fa;
+  --ink-lift:    #eef0f7;
+  --surface:     #ffffff;
+  --border-dim:  #dde0ef;
+  --border:      #c8cce0;
+  --text:        #0f1221;
+  --text-soft:   #3a4060;
+  --text-muted:  #6b7194;
+  --placeholder: #a8adc4;
+  --accent:      #4060f0;
+  --accent-lit:  #5a7aff;
+  --accent-dim:  #2d4dca;
+  --green:       #0fa871;
+  --green-dim:   #d2f5e8;
+  --red:         #e53e3e;
+  --scrollbar-thumb: #c8cce0;
+}
+
+/* ─── Base ───────────────────────────────────────────── */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--ink);
+  color: var(--text);
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* ─── Grain texture ──────────────────────────────────── */
+.grain-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+}
+
+/* ─── Ambient glows ──────────────────────────────────── */
+.ambient-container {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* ─── Scrollbar ──────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--ink);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 3px;
+}
+
+/* ─── Selection ──────────────────────────────────────── */
+::selection {
+  background: rgba(88, 124, 255, 0.3);
+  color: var(--text);
+}
+
+/* ─── Keyframes ──────────────────────────────────────── */
+@keyframes marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(0.8); }
+}
+
+@keyframes ambientA {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%  { transform: translate(2%, -1%) scale(1.03); }
+  66%  { transform: translate(-1%, 1.5%) scale(0.98); }
+}
+
+@keyframes ambientB {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%  { transform: translate(-2%, -2%) scale(1.04); }
+}
+
+/* ─── Utility semantic aliases ───────────────────────── */
+.bg-ink          { background-color: var(--ink); }
+.bg-ink-lift     { background-color: var(--ink-lift); }
+.bg-surface      { background-color: var(--surface); }
+.border-dim      { border-color: var(--border-dim); }
+.border-theme    { border-color: var(--border); }
+.text-theme      { color: var(--text); }
+.text-soft       { color: var(--text-soft); }
+.text-muted      { color: var(--text-muted); }
+.text-accent     { color: var(--accent); }
+.text-accent-lit { color: var(--accent-lit); }
+.bg-accent       { background-color: var(--accent); }
