@@ -20,8 +20,6 @@ const ADMIN = process.env.ADMIN_EMAIL!;
 //       subject: "You're on the ArchitectureAI waitlist",
 //       html: confirmationHtml(name),
 //     });
-
-//     console.log(test, 'User');
 //     console.log("[email] Confirmation sent to", to);
 //   } catch (err) {
 //     console.error("[email] Failed to send confirmation:", err);
@@ -52,7 +50,6 @@ export async function sendAdminNotification(entry: {
       html: adminHtml(entry),
     });
 
-    console.log(test);
     console.log("[email] Admin notification sent to", ADMIN);
   } catch (err) {
     console.error("[email] Failed to send admin notification:", err);

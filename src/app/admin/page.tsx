@@ -46,7 +46,7 @@ export default function AdminPage() {
     setError("");
     try {
       const res = await fetch(
-        `/api/admin?token=${encodeURIComponent(t)}`,
+        `/api/admin`,
         { headers: { "x-admin-token": t } }
       );
       if (res.status === 401) {
@@ -70,6 +70,27 @@ export default function AdminPage() {
   const handleLogin = (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     fetchEntries(token.trim());
+  };
+
+  const handleExport = async () => {
+    try {
+      const res = await fetch("/api/admin/export", {
+        headers: { "x-admin-token": token.trim() }
+      });
+      if (!res.ok) throw new Error("Failed to export");
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `waitlist-${new Date().toISOString().slice(0, 10)}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (err) {
+      console.error(err);
+      setError("Failed to export CSV.");
+    }
   };
 
   const toggleExpand = (id: string) => {
@@ -137,13 +158,12 @@ export default function AdminPage() {
           Lock
         </button>
         {stats && stats.total > 0 && (
-          <a
-            href={`/api/admin/export?token=${encodeURIComponent(token)}`}
+          <button
+            onClick={handleExport}
             className="px-4 py-2 rounded-full border border-[#1a4d3a] text-xs text-[#34d399] hover:bg-[#1a4d3a] transition-colors cursor-pointer no-underline"
-            download
           >
             Export CSV →
-          </a>
+          </button>
         )}
       </div>
 
