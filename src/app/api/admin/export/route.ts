@@ -1,3 +1,5 @@
+export const runtime = "edge";
+
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import Waitlist from "@/models/Waitlist";
@@ -22,12 +24,20 @@ export async function GET(request: Request) {
   ];
 
   const csvRows = [headers.join(",")];
-  for (const e of entries as any[]) {
+  for (const e of entries as unknown as Record<string, unknown>[]) {
     csvRows.push(
       headers
         .map((h) => {
-          const val = h === "frameworks" ? (e[h] || []).join(";") : (e[h] ?? "");
-          return `"${String(val).replace(/"/g, '""')}"`;
+          const val = h === "frameworks" ? ((e[h] as string[]) || []).join(";") : (e[h] ?? "");
+          let stringVal = "";
+          if (val instanceof Date) {
+            stringVal = val.toISOString();
+          } else if (typeof val === "string") {
+            stringVal = val;
+          } else if (typeof val === "number" || typeof val === "boolean") {
+            stringVal = String(val);
+          }
+          return `"${stringVal.replaceAll('"', '""')}"`;
         })
         .join(",")
     );

@@ -1,3 +1,5 @@
+export const runtime = "edge";
+
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import Waitlist from "@/models/Waitlist";
@@ -23,9 +25,9 @@ export async function GET(request: Request) {
 
     const stats = {
       total: entries.length,
-      newsletter: entries.filter((e: any) => e.interest === "newsletter").length,
-      launch: entries.filter((e: any) => e.interest === "launch").length,
-      partner: entries.filter((e: any) => e.interest === "partner").length,
+      newsletter: entries.filter((e: { interest?: string }) => e.interest === "newsletter").length,
+      launch: entries.filter((e: { interest?: string }) => e.interest === "launch").length,
+      partner: entries.filter((e: { interest?: string }) => e.interest === "partner").length,
     };
 
     return NextResponse.json({ success: true, stats, entries }, { status: 200 });

@@ -1,3 +1,5 @@
+export const runtime = "edge";
+
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import Waitlist from "@/models/Waitlist";
@@ -58,14 +60,14 @@ export async function POST(request: Request) {
       ]);
 
       return NextResponse.json({ success: true }, { status: 201 });
-    } catch (err: any) {
-      if (err.code === 11000) {
+    } catch (err: unknown) {
+      if (err && typeof err === "object" && "code" in err && err.code === 11000) {
         /* duplicate email — silently succeed so the user doesn't know */
         return NextResponse.json({ success: true }, { status: 200 });
       }
       throw err;
     }
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("[api/waitlist] Error:", err);
     return NextResponse.json(
       { success: false, error: "Something went wrong. Please try again later." },
