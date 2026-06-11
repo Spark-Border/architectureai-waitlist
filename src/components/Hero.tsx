@@ -90,11 +90,11 @@ export default function Hero() {
           initial="hidden"
           animate="visible"
           variants={fadeUp}
-          className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto"
+          className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 w-full sm:w-auto px-2 sm:px-0"
         >
           <motion.a
             href="#signup"
-            className="w-full sm:w-auto inline-flex justify-center items-center gap-2 px-8 py-4 rounded-full font-semibold text-[1rem] no-underline transition-all duration-300"
+            className="w-full sm:w-auto inline-flex justify-center items-center gap-2 px-6 py-3.5 sm:px-8 sm:py-4 rounded-full font-semibold text-[1rem] no-underline transition-all duration-300"
             style={{ background: "var(--text)", color: "var(--ink)", boxShadow: "0 0 30px color-mix(in srgb, var(--text) 25%, transparent)" }}
             whileHover={{ y: -2, boxShadow: "0 15px 40px color-mix(in srgb, var(--text) 40%, transparent)", scale: 1.02 }}
             whileTap={{ y: 0, scale: 0.98 }}
@@ -110,9 +110,13 @@ export default function Hero() {
 
           <motion.a
             href="#why"
-            className="w-full sm:w-auto group inline-flex justify-center items-center gap-2 px-6 py-4 rounded-full text-[1rem] font-medium no-underline transition-all duration-200 border border-transparent"
-            style={{ color: "var(--text-soft)" }}
-            whileHover={{ color: "var(--text)", background: "color-mix(in srgb, var(--surface) 50%, transparent)", borderColor: "var(--border)" }}
+            className="w-full sm:w-auto group inline-flex justify-center items-center gap-2 px-6 py-3.5 sm:py-4 rounded-full text-[1rem] font-medium no-underline transition-all duration-200 border"
+            style={{ 
+              color: "var(--text-soft)",
+              borderColor: "var(--border-dim)",
+              background: "color-mix(in srgb, var(--surface) 40%, transparent)"
+            }}
+            whileHover={{ color: "var(--text)", background: "color-mix(in srgb, var(--surface) 80%, transparent)", borderColor: "var(--border)" }}
           >
             See what we&apos;re building
           </motion.a>
