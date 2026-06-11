@@ -55,6 +55,7 @@ export default function WaitlistSection() {
     frameworks: "",
     painPoints: "",
   });
+  const [consent, setConsent] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -84,6 +85,7 @@ export default function WaitlistSection() {
     if (!formData.jobTitle.trim()) errs.jobTitle = "Required";
     if (!formData.industry.trim()) errs.industry = "Required";
     if (!formData.frameworks.trim()) errs.frameworks = "Required";
+    if (!consent) errs.consent = "You must agree to continue";
     setErrors(errs);
     return Object.keys(errs).length === 0;
   };
@@ -464,28 +466,44 @@ export default function WaitlistSection() {
                   </Field>
 
                   {/* Consent */}
-                  <motion.label
-                    className="flex items-start gap-2.5 my-4 text-xs leading-relaxed cursor-pointer"
-                    style={{ color: "var(--text-muted)" }}
-                    whileHover={{ color: "var(--text-soft)" }}
-                  >
-                    <input
-                      type="checkbox"
-                      required
-                      className="mt-0.5 w-3.75 h-3.75 cursor-pointer accent-[#587cff]"
-                    />
-                    <span>
-                      I agree to receive emails from ArchitectureAI and understand my
-                      data will be handled per the{" "}
-                      <a
-                        href="/privacy"
-                        className="hover:underline"
-                        style={{ color: "var(--accent-lit)" }}
+                  <div className="flex flex-col gap-1.5 mb-4">
+                    <motion.label
+                      className="flex items-start gap-2.5 mt-2 text-xs leading-relaxed cursor-pointer"
+                      style={{ color: "var(--text-muted)" }}
+                      whileHover={{ color: "var(--text-soft)" }}
+                    >
+                      <input
+                        type="checkbox"
+                        required
+                        checked={consent}
+                        onChange={(e) => {
+                          setConsent(e.target.checked);
+                          if (errors.consent) {
+                            setErrors((prev) => {
+                              const next = { ...prev };
+                              delete next.consent;
+                              return next;
+                            });
+                          }
+                        }}
+                        className="mt-0.5 w-3.75 h-3.75 cursor-pointer accent-[#587cff]"
+                      />
+                      <span>
+                        I agree to receive emails from ArchitectureAI and understand my
+                        data will be handled securely.
+                      </span>
+                    </motion.label>
+                    {errors.consent && (
+                      <motion.span
+                        initial={{ opacity: 0, y: -4 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="text-[0.7rem]"
+                        style={{ color: "var(--red)" }}
                       >
-                        Privacy Policy
-                      </a>{" "}. I can opt out anytime.
-                    </span>
-                  </motion.label>
+                        {errors.consent}
+                      </motion.span>
+                    )}
+                  </div>
 
                   {/* Submit */}
                   <motion.button
