@@ -8,10 +8,10 @@ export const metadata: Metadata = {
     "ArchitectureAI is the first operating system for enterprise architecture — automating reviews, enforcing governance, and building a continuously learning knowledge graph. Join the waitlist.",
   icons: {
     icon: [
-      { url: "/favicon.png", type: "image/png" },
+      { url: "/icon.svg", type: "image/svg+xml" },
     ],
-    shortcut: "/favicon.png",
-    apple: "/favicon.png",
+    shortcut: "/icon.svg",
+    apple: "/icon.svg",
   },
   openGraph: {
     title: "ArchitectureAI — AI-Native Enterprise Architecture OS",
