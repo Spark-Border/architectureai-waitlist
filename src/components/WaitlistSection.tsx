@@ -41,7 +41,7 @@ const optionData = [
 
 /* ── Shared input className (no bg/border — handled via style) ── */
 const inputCls =
-  "w-full px-3 py-2.5 rounded-md text-sm outline-none transition-all duration-200";
+  "w-full px-3 py-2.5 rounded-md text-sm outline-none transition-all duration-200 focus:ring-1 focus:ring-[rgba(88,124,255,0.45)] focus:border-[rgba(88,124,255,0.45)]";
 
 export default function WaitlistSection() {
   const [interest, setInterest] = useState("newsletter");
@@ -155,10 +155,10 @@ export default function WaitlistSection() {
                 key={opt.value}
                 onClick={() => setInterest(opt.value)}
                 whileTap={{ scale: 0.995 }}
-                className="flex items-start gap-3.5 p-4 rounded-xl border cursor-pointer transition-all duration-200"
+                className="flex items-start gap-3.5 p-4 rounded-xl border cursor-pointer transition-all duration-200 hover:border-[rgba(88,124,255,0.3)]"
                 style={{
                   borderColor:
-                    interest === opt.value ? "var(--accent)" : "var(--border-dim)",
+                    interest === opt.value ? "var(--accent)" : "var(--border)",
                   background:
                     interest === opt.value
                       ? "rgba(88,124,255,0.06)"
@@ -564,8 +564,8 @@ function Field({
     <div className="flex flex-col gap-1.5 mb-4">
       <label
         htmlFor={htmlFor}
-        className="text-[0.72rem] font-semibold uppercase tracking-[0.06em]"
-        style={{ color: "var(--text-soft)" }}
+        className="font-mono text-[0.65rem] tracking-wider uppercase"
+        style={{ color: "var(--text-muted)" }}
       >
         {label}
         {required && (

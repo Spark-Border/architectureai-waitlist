@@ -18,6 +18,7 @@
   --green-dim:   #1a4d3a;
   --red:         #f87171;
   --scrollbar-thumb: #222840;
+  --grid-color:  rgba(255, 255, 255, 0.018);
 }
 
 /* ─── Light theme ────────────────────────────────────── */
@@ -39,6 +40,7 @@
   --green-dim:   #d2f5e8;
   --red:         #e53e3e;
   --scrollbar-thumb: #c8cce0;
+  --grid-color:  rgba(15, 18, 33, 0.025);
 }
 
 /* ─── Base ───────────────────────────────────────────── */
@@ -78,6 +80,18 @@ body {
   z-index: 0;
   pointer-events: none;
   overflow: hidden;
+}
+
+/* ─── Engineering Grid Blueprint ───────────────────────── */
+.engineering-grid {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: 
+    linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
+  background-size: 32px 32px;
 }
 
 /* ─── Scrollbar ──────────────────────────────────────── */

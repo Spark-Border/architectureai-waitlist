@@ -46,12 +46,13 @@ export default function TopBar() {
         <div className="flex items-center gap-3">
           <motion.a
             href="#signup"
-            className="hidden sm:inline-flex px-4 py-2 rounded-full border text-sm font-medium transition-colors duration-200 no-underline whitespace-nowrap"
+            className="hidden sm:inline-flex px-4 py-2 rounded-full border text-sm font-medium transition-all duration-200 no-underline whitespace-nowrap"
             style={{
               borderColor: "var(--border)",
               color: "var(--text-soft)",
+              background: "color-mix(in srgb, var(--surface) 30%, transparent)",
             }}
-            whileHover={{ scale: 1.03, borderColor: "var(--accent)", color: "var(--text)" }}
+            whileHover={{ scale: 1.03, borderColor: "var(--accent-lit)", color: "var(--text)", background: "color-mix(in srgb, var(--accent) 8%, transparent)" }}
             whileTap={{ scale: 0.97 }}
           >
             Stay in the loop

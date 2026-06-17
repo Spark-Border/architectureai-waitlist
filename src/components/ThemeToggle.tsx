@@ -33,14 +33,14 @@ export default function ThemeToggle() {
     <motion.button
       id="theme-toggle-btn"
       onClick={toggleTheme}
-      whileHover={{ scale: 1.05 }}
+      whileHover={{ scale: 1.05, color: "var(--text)", borderColor: "var(--accent-lit)", background: "color-mix(in srgb, var(--accent) 8%, transparent)" }}
       whileTap={{ scale: 0.94 }}
       aria-label="Toggle theme"
-      className="w-9 h-9 rounded-full border flex items-center justify-center transition-colors duration-200 cursor-pointer"
+      className="w-9 h-9 rounded-full border flex items-center justify-center transition-all duration-200 cursor-pointer"
       style={{
         borderColor: "var(--border)",
         background: "transparent",
-        color: "var(--text-muted)",
+        color: "var(--text-soft)",
       }}
     >
       <AnimatePresence mode="wait" initial={false}>

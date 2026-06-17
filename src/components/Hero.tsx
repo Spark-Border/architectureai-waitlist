@@ -31,7 +31,7 @@ export default function Hero() {
           initial="hidden"
           animate="visible"
           variants={fadeUp}
-          className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border text-[0.8rem] sm:text-sm font-medium mb-6 sm:mb-8 tracking-tight transition-colors hover:bg-white/5"
+          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border font-mono text-[0.68rem] uppercase tracking-wider mb-6 sm:mb-8 transition-colors hover:bg-white/5"
           style={{
             background: "color-mix(in srgb, var(--accent) 12%, transparent)",
             borderColor: "color-mix(in srgb, var(--accent) 25%, transparent)",
@@ -51,7 +51,7 @@ export default function Hero() {
           initial="hidden"
           animate="visible"
           variants={fadeUp}
-          className="text-4xl sm:text-5xl md:text-6xl lg:text-[5rem] font-extrabold tracking-tighter leading-[1.05] mb-8"
+          className="text-4xl sm:text-5xl md:text-6xl lg:text-[5rem] font-black tracking-tighter leading-[1.05] mb-8"
           style={{ color: "var(--text)" }}
         >
           Enterprise Architecture,
@@ -60,7 +60,7 @@ export default function Hero() {
           <span className="bg-linear-to-r from-[#7b98ff] via-[#a78bfa] to-[#ff8bf0] bg-clip-text text-transparent">
             AI-native
           </span>{" "}
-          intelligence.
+          Intelligence.
         </motion.h1>
 
         {/* Description */}
@@ -106,10 +106,10 @@ export default function Hero() {
             className="w-full sm:w-auto group inline-flex justify-center items-center gap-2 px-6 py-3.5 sm:py-4 rounded-full text-[1rem] font-medium no-underline transition-all duration-200 border"
             style={{ 
               color: "var(--text-soft)",
-              borderColor: "var(--border-dim)",
+              borderColor: "var(--border)",
               background: "color-mix(in srgb, var(--surface) 40%, transparent)"
             }}
-            whileHover={{ color: "var(--text)", background: "color-mix(in srgb, var(--surface) 80%, transparent)", borderColor: "var(--border)" }}
+            whileHover={{ color: "var(--text)", background: "color-mix(in srgb, var(--surface) 80%, transparent)", borderColor: "var(--accent)" }}
           >
             See what we&apos;re building
           </motion.a>

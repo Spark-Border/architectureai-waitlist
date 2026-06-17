@@ -32,6 +32,8 @@ export default function RootLayout({
         <ThemeProvider>
           {/* Grain texture */}
           <div className="grain-overlay" aria-hidden="true" />
+          {/* Engineering grid blueprint background */}
+          <div className="engineering-grid" aria-hidden="true" />
           {/* Ambient glows */}
           <div className="ambient-container" aria-hidden="true">
             <div className="absolute top-[-30%] left-[-10%] w-[55%] h-[55%] bg-[radial-gradient(ellipse,rgba(88,124,255,0.07)_0%,transparent_70%)] animate-[ambientA_18s_ease-in-out_infinite]" />

@@ -46,18 +46,23 @@ function Card({ icon, title, body, index }: Readonly<CardProps>) {
       }}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className="p-7 rounded-2xl border cursor-default transition-shadow duration-300 hover:shadow-[0_24px_64px_rgba(0,0,0,0.15)] sm:col-span-1"
-      whileHover={{ borderColor: "var(--border)" }}
+      className="p-7 rounded-2xl border cursor-default transition-all duration-300 hover:shadow-[0_12px_40px_rgba(0,0,0,0.1)] sm:col-span-1"
+      whileHover={{ borderColor: "var(--border)", y: -2 }}
     >
-      <div
-        className="w-10 h-10 rounded-[10px] flex items-center justify-center text-[1.15rem] mb-4"
-        style={{
-          background: "rgba(88,124,255,0.1)",
-          color: "var(--accent-lit)",
-          transform: "translateZ(20px)",
-        }}
-      >
-        {icon}
+      <div className="flex justify-between items-start mb-4">
+        <div
+          className="w-10 h-10 rounded-[10px] flex items-center justify-center text-[1.15rem]"
+          style={{
+            background: "rgba(88,124,255,0.06)",
+            color: "var(--accent-lit)",
+            transform: "translateZ(20px)",
+          }}
+        >
+          {icon}
+        </div>
+        <span className="font-mono text-[0.62rem] tracking-wider text-[#6e7388]/50 select-none">
+          [0{index + 1}]
+        </span>
       </div>
       <h3
         className="text-base font-semibold tracking-[-0.01em] mb-1.5"
@@ -116,16 +121,16 @@ const cards: CardProps[] = [
 
 export default function FeaturesBento() {
   return (
-    <section id="why">
+    <section id="why" className="py-20">
       <motion.p
         initial={{ opacity: 0, y: 12 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.5 }}
-        className="text-[0.75rem] font-semibold uppercase tracking-[0.08em] max-w-275 mx-auto px-6 mb-5"
+        className="font-mono text-[0.68rem] uppercase tracking-widest max-w-275 mx-auto px-6 mb-4"
         style={{ color: "var(--accent-lit)" }}
       >
-        What we&apos;re building
+        {"// WHAT WE'RE BUILDING"}
       </motion.p>
 
       <motion.h2
@@ -133,7 +138,7 @@ export default function FeaturesBento() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.5, delay: 0.08 }}
-        className="text-[clamp(1.7rem,3vw,2.1rem)] font-bold tracking-tight leading-tight max-w-275 mx-auto px-6 mb-12"
+        className="text-[clamp(1.7rem,3vw,2.2rem)] font-black tracking-tighter leading-tight max-w-275 mx-auto px-6 mb-12"
         style={{ color: "var(--text)" }}
       >
         An operating system for the
