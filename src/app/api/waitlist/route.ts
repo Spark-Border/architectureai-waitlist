@@ -10,7 +10,7 @@ export async function POST(request: Request) {
     /* ── Validate ── */
     const { email, firstName, lastName, interest, consentedAt, orgName, jobTitle, industry, frameworks } = body;
 
-    if (!email || !firstName || !lastName || !orgName || !jobTitle || !industry || !frameworks || frameworks.length === 0) {
+    if (!email || !firstName || !lastName || !jobTitle || !industry || !frameworks || frameworks.length === 0) {
       return NextResponse.json(
         { success: false, error: "Please fill out all required fields." },
         { status: 400 }
@@ -41,7 +41,7 @@ export async function POST(request: Request) {
         email: formattedEmail,
         firstName: firstName.trim(),
         lastName: lastName.trim(),
-        orgName: body.orgName?.trim() || "",
+        orgName: orgName?.trim() || "",
         jobTitle: body.jobTitle || "",
         industry: body.industry || "",
         frameworks: Array.isArray(body.frameworks) ? body.frameworks : [],

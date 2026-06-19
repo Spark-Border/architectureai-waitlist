@@ -28,7 +28,7 @@ const WaitlistSchema = new Schema<IWaitlist>(
     },
     firstName: { type: String, required: true, trim: true },
     lastName: { type: String, required: true, trim: true },
-    orgName: { type: String, required: true, trim: true },
+    orgName: { type: String, required: false, trim: true },
     jobTitle: { type: String, required: true },
     industry: { type: String, required: true },
     frameworks: [{ type: String }],

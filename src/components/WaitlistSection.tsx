@@ -10,7 +10,9 @@ interface FormData {
   lastName: string;
   orgName: string;
   jobTitle: string;
+  customJobTitle: string;
   industry: string;
+  customIndustry: string;
   frameworks: string;
   painPoints: string;
 }
@@ -51,7 +53,9 @@ export default function WaitlistSection() {
     lastName: "",
     orgName: "",
     jobTitle: "",
+    customJobTitle: "",
     industry: "",
+    customIndustry: "",
     frameworks: "",
     painPoints: "",
   });
@@ -64,14 +68,28 @@ export default function WaitlistSection() {
   const formRef = useRef<HTMLFormElement>(null);
 
   const updateField = (field: keyof FormData, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-    if (errors[field]) {
-      setErrors((prev) => {
-        const next = { ...prev };
-        delete next[field];
-        return next;
-      });
-    }
+    setFormData((prev) => {
+      const updated = { ...prev, [field]: value };
+      if (field === "jobTitle" && value !== "other") {
+        updated.customJobTitle = "";
+      }
+      if (field === "industry" && value !== "other") {
+        updated.customIndustry = "";
+      }
+      return updated;
+    });
+
+    setErrors((prev) => {
+      const next = { ...prev };
+      if (next[field]) delete next[field];
+      if (field === "jobTitle" && value !== "other" && next.customJobTitle) {
+        delete next.customJobTitle;
+      }
+      if (field === "industry" && value !== "other" && next.customIndustry) {
+        delete next.customIndustry;
+      }
+      return next;
+    });
   };
 
   const validate = (): boolean => {
@@ -81,9 +99,14 @@ export default function WaitlistSection() {
       errs.email = "Invalid email";
     if (!formData.firstName.trim()) errs.firstName = "Required";
     if (!formData.lastName.trim()) errs.lastName = "Required";
-    if (!formData.orgName.trim()) errs.orgName = "Required";
     if (!formData.jobTitle.trim()) errs.jobTitle = "Required";
+    if (formData.jobTitle === "other" && !formData.customJobTitle.trim()) {
+      errs.customJobTitle = "Required";
+    }
     if (!formData.industry.trim()) errs.industry = "Required";
+    if (formData.industry === "other" && !formData.customIndustry.trim()) {
+      errs.customIndustry = "Required";
+    }
     if (!formData.frameworks.trim()) errs.frameworks = "Required";
     if (!consent) errs.consent = "You must agree to continue";
     setErrors(errs);
@@ -100,7 +123,14 @@ export default function WaitlistSection() {
 
     const payload = {
       interest,
-      ...formData,
+      email: formData.email,
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      orgName: formData.orgName,
+      jobTitle: formData.jobTitle === "other" ? formData.customJobTitle : formData.jobTitle,
+      industry: formData.industry === "other" ? formData.customIndustry : formData.industry,
+      frameworks: formData.frameworks ? [formData.frameworks] : [],
+      painPoints: formData.painPoints,
       consentedAt: new Date().toISOString(),
     };
 
@@ -357,7 +387,7 @@ export default function WaitlistSection() {
                   </div>
 
                   {/* Organisation */}
-                  <Field label="Organisation" htmlFor="orgName" required error={errors.orgName}>
+                  <Field label="Organisation" htmlFor="orgName" error={errors.orgName}>
                     <input
                       id="orgName"
                       type="text"
@@ -371,59 +401,114 @@ export default function WaitlistSection() {
 
                   {/* Job title + Industry */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <Field label="Job title" htmlFor="jobTitle" required error={errors.jobTitle}>
-                      <select
-                        id="jobTitle"
-                        value={formData.jobTitle}
-                        onChange={(e) => updateField("jobTitle", e.target.value)}
-                        className={inputCls + " cursor-pointer appearance-none"}
-                        style={{
-                          ...inputStyle(),
-                          backgroundImage:
-                            "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1.5l5 5 5-5' stroke='%236e7388' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E\")",
-                          backgroundRepeat: "no-repeat",
-                          backgroundPosition: "right 12px center",
-                          paddingRight: "2rem",
-                        }}
-                      >
-                        <option value="" disabled>Select…</option>
-                        <option value="enterprise-architect">Enterprise Architect</option>
-                        <option value="solution-architect">Solution Architect</option>
-                        <option value="cto">CTO / VP of Engineering</option>
-                        <option value="head-of-engineering">Head of Engineering</option>
-                        <option value="compliance-governance">IT Governance / Compliance Lead</option>
-                        <option value="engineering-manager">Engineering Manager</option>
-                        <option value="other">Other</option>
-                      </select>
-                    </Field>
-                    <Field label="Industry" htmlFor="industry" required error={errors.industry}>
-                      <select
-                        id="industry"
-                        value={formData.industry}
-                        onChange={(e) => updateField("industry", e.target.value)}
-                        className={inputCls + " cursor-pointer appearance-none"}
-                        style={{
-                          ...inputStyle(),
-                          backgroundImage:
-                            "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1.5l5 5 5-5' stroke='%236e7388' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E\")",
-                          backgroundRepeat: "no-repeat",
-                          backgroundPosition: "right 12px center",
-                          paddingRight: "2rem",
-                        }}
-                      >
-                        <option value="" disabled>Select…</option>
-                        <option value="banking">Banking</option>
-                        <option value="fintech">FinTech</option>
-                        <option value="insurance">Insurance</option>
-                        <option value="saas">SaaS / Technology</option>
-                        <option value="telecom">Telecom</option>
-                        <option value="government">Government</option>
-                        <option value="healthcare">Healthcare</option>
-                        <option value="manufacturing">Manufacturing</option>
-                        <option value="consulting">Consulting</option>
-                        <option value="other">Other</option>
-                      </select>
-                    </Field>
+                    <div>
+                      <Field label="Job title" htmlFor="jobTitle" required error={errors.jobTitle}>
+                        <select
+                          id="jobTitle"
+                          value={formData.jobTitle}
+                          onChange={(e) => updateField("jobTitle", e.target.value)}
+                          className={inputCls + " cursor-pointer appearance-none"}
+                          style={{
+                            ...inputStyle(),
+                            backgroundImage:
+                              "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1.5l5 5 5-5' stroke='%236e7388' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E\")",
+                            backgroundRepeat: "no-repeat",
+                            backgroundPosition: "right 12px center",
+                            paddingRight: "2rem",
+                          }}
+                        >
+                          <option value="" disabled>Select…</option>
+                          <option value="enterprise-architect">Enterprise Architect</option>
+                          <option value="solution-architect">Solution Architect</option>
+                          <option value="cto">CTO / VP of Engineering</option>
+                          <option value="head-of-engineering">Head of Engineering</option>
+                          <option value="compliance-governance">IT Governance / Compliance Lead</option>
+                          <option value="engineering-manager">Engineering Manager</option>
+                          <option value="other">Other</option>
+                        </select>
+                      </Field>
+                      <AnimatePresence>
+                        {formData.jobTitle === "other" && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: "auto", opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.25, ease: "easeInOut" }}
+                            style={{ overflow: "hidden" }}
+                          >
+                            <div className="pt-2">
+                              <Field label="Specify Job Title" htmlFor="customJobTitle" required error={errors.customJobTitle}>
+                                <input
+                                  id="customJobTitle"
+                                  type="text"
+                                  value={formData.customJobTitle}
+                                  onChange={(e) => updateField("customJobTitle", e.target.value)}
+                                  placeholder="Your job title"
+                                  className={inputCls}
+                                  style={inputStyle()}
+                                />
+                              </Field>
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+
+                    <div>
+                      <Field label="Industry" htmlFor="industry" required error={errors.industry}>
+                        <select
+                          id="industry"
+                          value={formData.industry}
+                          onChange={(e) => updateField("industry", e.target.value)}
+                          className={inputCls + " cursor-pointer appearance-none"}
+                          style={{
+                            ...inputStyle(),
+                            backgroundImage:
+                              "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1.5l5 5 5-5' stroke='%236e7388' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E\")",
+                            backgroundRepeat: "no-repeat",
+                            backgroundPosition: "right 12px center",
+                            paddingRight: "2rem",
+                          }}
+                        >
+                          <option value="" disabled>Select…</option>
+                          <option value="banking">Banking</option>
+                          <option value="fintech">FinTech</option>
+                          <option value="insurance">Insurance</option>
+                          <option value="saas">SaaS / Technology</option>
+                          <option value="telecom">Telecom</option>
+                          <option value="government">Government</option>
+                          <option value="healthcare">Healthcare</option>
+                          <option value="manufacturing">Manufacturing</option>
+                          <option value="consulting">Consulting</option>
+                          <option value="other">Other</option>
+                        </select>
+                      </Field>
+                      <AnimatePresence>
+                        {formData.industry === "other" && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: "auto", opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.25, ease: "easeInOut" }}
+                            style={{ overflow: "hidden" }}
+                          >
+                            <div className="pt-2">
+                              <Field label="Specify Industry" htmlFor="customIndustry" required error={errors.customIndustry}>
+                                <input
+                                  id="customIndustry"
+                                  type="text"
+                                  value={formData.customIndustry}
+                                  onChange={(e) => updateField("customIndustry", e.target.value)}
+                                  placeholder="Your industry"
+                                  className={inputCls}
+                                  style={inputStyle()}
+                                />
+                              </Field>
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
                   </div>
 
                   {/* Frameworks */}
