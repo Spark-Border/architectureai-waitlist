@@ -1,49 +1,33 @@
-"use client";
-
-import { motion } from "framer-motion";
+import Link from "next/link";
+import GateMark from "@/components/GateMark";
 
 export default function Footer() {
+  const contact = process.env.NEXT_PUBLIC_CONTACT_EMAIL;
+
   return (
-    <motion.footer
-      initial={{ opacity: 0 }}
-      whileInView={{ opacity: 1 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5 }}
-      className="max-w-275 mx-auto px-4 sm:px-6 py-6 sm:py-8 border-t flex justify-center items-center gap-3 sm:gap-4 text-[0.78rem] text-center"
-      style={{ borderColor: "var(--border-dim)", color: "var(--text-muted)" }}
-    >
-      <span>© 2026 ArchitectureAI</span>
-      {/* <span className="flex gap-3">
-        <a
-          href="#"
-          className="no-underline transition-colors hover:underline"
-          style={{ color: "var(--text-muted)" }}
-          onMouseEnter={(e) => (e.currentTarget.style.color = "var(--text-soft)")}
-          onMouseLeave={(e) => (e.currentTarget.style.color = "var(--text-muted)")}
+    <footer className="mt-auto border-t border-line">
+      <div className="mx-auto flex w-full max-w-275 flex-col gap-6 px-4 py-8 sm:px-6 md:flex-row md:items-center md:justify-between">
+        <div className="flex items-center gap-3 text-ink">
+          <GateMark size={24} />
+          <div>
+            <p className="text-[14px] font-bold tracking-tight">
+              ArchitectureAI
+            </p>
+            <p className="text-[13px] text-soft">
+              Intelligence for complex systems.
+            </p>
+          </div>
+        </div>
+
+        <nav
+          aria-label="Footer"
+          className="flex flex-wrap items-center gap-x-6 gap-y-2 text-[13px]"
         >
-          Privacy
-        </a>
-        <span>·</span>
-        <a
-          href="#"
-          className="no-underline transition-colors"
-          style={{ color: "var(--text-muted)" }}
-          onMouseEnter={(e) => (e.currentTarget.style.color = "var(--text-soft)")}
-          onMouseLeave={(e) => (e.currentTarget.style.color = "var(--text-muted)")}
-        >
-          Terms
-        </a>
-        <span>·</span>
-        <a
-          href="#"
-          className="no-underline transition-colors"
-          style={{ color: "var(--text-muted)" }}
-          onMouseEnter={(e) => (e.currentTarget.style.color = "var(--text-soft)")}
-          onMouseLeave={(e) => (e.currentTarget.style.color = "var(--text-muted)")}
-        >
-          hello@architectureai.com
-        </a>
-      </span> */}
-    </motion.footer>
+          {/* <Link href="/privacy">Privacy notice</Link> */}
+          {contact && <a href={`mailto:${contact}`}>{contact}</a>}
+          <span className="text-soft">© 2026 ArchitectureAI</span>
+        </nav>
+      </div>
+    </footer>
   );
 }
