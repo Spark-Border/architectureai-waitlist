@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { ChevronDown } from "lucide-react";
+import GateMark from "@/components/GateMark";
 
 interface WaitlistEntry {
   _id: string;
@@ -14,6 +15,13 @@ interface WaitlistEntry {
   frameworks: string[];
   painPoints: string;
   interest: "newsletter" | "launch" | "partner";
+  utmSource?: string;
+  utmMedium?: string;
+  utmCampaign?: string;
+  referrer?: string;
+  freeEmailDomain?: boolean;
+  profileCompletedAt?: string;
+  extrasCompletedAt?: string;
   confirmationSent: boolean;
   consentedAt: string;
   createdAt: string;
@@ -24,12 +32,17 @@ interface Stats {
   newsletter: number;
   launch: number;
   partner: number;
+  undecided: number;
+  funnel: { email: number; profile: number; extras: number };
+  personalEmail: number;
+  sources: { source: string; signups: number }[];
 }
 
 const interestLabels: Record<string, string> = {
-  newsletter: "📬 Informed",
-  launch: "🚀 Launch",
-  partner: "🤝 Partner",
+  undecided: "Not chosen",
+  partner: "Testing partner",
+  launch: "Launch update",
+  newsletter: "Progress updates",
 };
 
 export default function AdminPage() {
@@ -45,13 +58,14 @@ export default function AdminPage() {
     setLoading(true);
     setError("");
     try {
-      const res = await fetch(
-        `/api/admin`,
-        { headers: { "x-admin-token": t } }
-      );
+      const res = await fetch("/api/admin", { headers: { "x-admin-token": t } });
       if (res.status === 401) {
-        setError("Wrong password.");
+        setError("That password is not right.");
         setAuthenticated(false);
+        return;
+      }
+      if (res.status === 429) {
+        setError("Too many attempts. Wait a few minutes and try again.");
         return;
       }
       const data = await res.json();
@@ -69,27 +83,27 @@ export default function AdminPage() {
 
   const handleLogin = (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
-    fetchEntries(token.trim());
+    void fetchEntries(token.trim());
   };
 
   const handleExport = async () => {
     try {
       const res = await fetch("/api/admin/export", {
-        headers: { "x-admin-token": token.trim() }
+        headers: { "x-admin-token": token.trim() },
       });
       if (!res.ok) throw new Error("Failed to export");
       const blob = await res.blob();
-      const url = window.URL.createObjectURL(blob);
+      const url = globalThis.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
       a.download = `waitlist-${new Date().toISOString().slice(0, 10)}.csv`;
       document.body.appendChild(a);
       a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
+      globalThis.URL.revokeObjectURL(url);
+      a.remove();
     } catch (err) {
       console.error(err);
-      setError("Failed to export CSV.");
+      setError("The CSV export failed. Try again.");
     }
   };
 
@@ -104,207 +118,268 @@ export default function AdminPage() {
 
   if (!authenticated) {
     return (
-      <div className="min-h-screen bg-[#080b14] flex items-center justify-center px-6">
-        <motion.form
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
+      <main className="flex min-h-screen items-center justify-center bg-paper px-4">
+        <form
           onSubmit={handleLogin}
-          className="w-full max-w-sm p-8 rounded-2xl border border-[#1a1f35] bg-[#111627]"
+          className="w-full max-w-sm rounded-md border border-line bg-raised p-8"
         >
-          <h1 className="text-lg font-bold text-white mb-1">Admin</h1>
-          <p className="text-xs text-[#6e7388] mb-6">Enter the admin password to view signups.</p>
-          {error && (
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-xs text-[#f87171] mb-4 bg-[rgba(248,113,113,0.08)] border border-[rgba(248,113,113,0.2)] rounded-md px-3 py-2"
-            >
-              {error}
-            </motion.p>
-          )}
+          <div className="mb-6 flex items-center gap-2.5 text-ink">
+            <GateMark size={24} />
+            <h1 className="text-lg font-bold tracking-tight">Admin</h1>
+          </div>
+          <label htmlFor="admin-password" className="t-ui mb-1.5 block text-ink">
+            Password
+          </label>
           <input
+            id="admin-password"
             type="password"
             value={token}
             onChange={(e) => setToken(e.target.value)}
-            placeholder="Password"
-            className="w-full px-3 py-2.5 rounded-md border border-[#222840] bg-[#0d1120] text-[#edf0f5] text-sm outline-none focus:border-[#587cff] focus:shadow-[0_0_0_3px_rgba(88,124,255,0.1)] mb-4"
-            autoFocus
+            autoComplete="current-password"
+            className="control mb-4"
+            aria-invalid={error ? true : undefined}
+            aria-describedby={error ? "admin-error" : undefined}
           />
+          {error && (
+            <p id="admin-error" role="alert" className="mb-4 text-[13px] text-danger">
+              {error}
+            </p>
+          )}
           <button
             type="submit"
             disabled={!token.trim() || loading}
-            className="w-full py-2.5 rounded-full bg-[#587cff] text-white font-semibold text-sm disabled:opacity-40 cursor-pointer hover:bg-[#7b98ff] transition-colors"
+            className="btn btn-primary w-full"
           >
             {loading ? "Checking…" : "View signups"}
           </button>
-        </motion.form>
-      </div>
+        </form>
+      </main>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#080b14] text-[#edf0f5]">
-      {/* Header */}
-      <div className="max-w-5xl mx-auto px-6 py-8 flex items-center justify-between border-b border-[#1a1f35]">
-        <div>
-          <h1 className="text-lg font-bold text-white">ArchitectureAI Admin</h1>
-          <p className="text-xs text-[#6e7388]">{stats?.total ?? 0} total signups</p>
+    <main className="min-h-screen bg-paper text-ink">
+      <div className="mx-auto flex w-full max-w-275 items-center justify-between gap-4 border-b border-line px-4 py-6 sm:px-6">
+        <div className="flex items-center gap-2.5">
+          <GateMark size={24} />
+          <div>
+            <h1 className="text-lg font-bold tracking-tight">ArchitectureAI admin</h1>
+            <p className="t-metric text-soft">{stats?.total ?? 0} signups</p>
+          </div>
         </div>
-        <button
-          onClick={() => { setAuthenticated(false); setToken(""); setEntries([]); setStats(null); }}
-          className="px-4 py-2 rounded-full border border-[#222840] text-xs text-[#6e7388] hover:border-[#587cff] hover:text-white transition-colors cursor-pointer"
-        >
-          Lock
-        </button>
-        {stats && stats.total > 0 && (
+        <div className="flex gap-2">
+          {stats && stats.total > 0 && (
+            <button type="button" onClick={handleExport} className="btn btn-ghost">
+              Export CSV
+            </button>
+          )}
           <button
-            onClick={handleExport}
-            className="px-4 py-2 rounded-full border border-[#1a4d3a] text-xs text-[#34d399] hover:bg-[#1a4d3a] transition-colors cursor-pointer no-underline"
+            type="button"
+            onClick={() => {
+              setAuthenticated(false);
+              setToken("");
+              setEntries([]);
+              setStats(null);
+            }}
+            className="btn btn-ghost"
           >
-            Export CSV →
+            Lock
           </button>
-        )}
+        </div>
       </div>
 
-      {/* Stats cards */}
-      {stats && (
-        <div className="max-w-5xl mx-auto px-6 py-8 grid grid-cols-4 gap-4">
-          <StatCard label="Total" value={stats.total} color="#7b98ff" />
-          <StatCard label="Newsletter" value={stats.newsletter} emoji="📬" />
-          <StatCard label="Launch" value={stats.launch} emoji="🚀" />
-          <StatCard label="Partners" value={stats.partner} emoji="🤝" />
-        </div>
+      {error && (
+        <p role="alert" className="mx-auto w-full max-w-275 px-4 pt-4 text-[13px] text-danger sm:px-6">
+          {error}
+        </p>
       )}
 
-      {/* Entry list */}
-      <div className="max-w-5xl mx-auto px-6 pb-16">
-        <div className="flex items-center justify-between mb-5">
-          <h2 className="text-sm font-semibold text-[#b4bac8] uppercase tracking-[0.06em]">
-            Signups
+      {stats && (
+        <dl className="mx-auto my-0 grid w-full max-w-275 grid-cols-2 gap-4 px-4 py-6 sm:px-6 md:grid-cols-5">
+          <Stat label="Total" value={stats.total} />
+          <Stat label="Testing partners" value={stats.partner} />
+          <Stat label="Launch updates" value={stats.launch} />
+          <Stat label="Progress updates" value={stats.newsletter} />
+          <Stat label="Not chosen" value={stats.undecided} />
+        </dl>
+      )}
+
+      {stats && (
+        <section
+          aria-labelledby="funnel-title"
+          className="mx-auto mb-6 w-full max-w-275 px-4 sm:px-6"
+        >
+          <h2 id="funnel-title" className="t-label mb-3 text-soft">
+            Form funnel
           </h2>
+          <div className="grid gap-4 md:grid-cols-[2fr_1fr]">
+            <div className="rounded-md border border-line bg-raised p-4">
+              {[
+                ["Email saved", stats.funnel.email],
+                ["Details saved", stats.funnel.profile],
+                ["Optional step saved", stats.funnel.extras],
+              ].map(([label, n]) => {
+                const pct = stats.funnel.email
+                  ? Math.round((Number(n) / stats.funnel.email) * 100)
+                  : 0;
+                return (
+                  <div key={label} className="mb-3 last:mb-0">
+                    <div className="mb-1 flex items-baseline justify-between text-[13px]">
+                      <span className="text-ink">{label}</span>
+                      <span className="t-metric text-ink">
+                        {n} <span className="text-soft">({pct}%)</span>
+                      </span>
+                    </div>
+                    <div className="h-1.5 rounded-sm bg-line" aria-hidden="true">
+                      <div className="h-1.5 rounded-sm bg-teal" style={{ width: `${pct}%` }} />
+                    </div>
+                  </div>
+                );
+              })}
+              <p className="mt-3 text-[12px] text-soft">
+                {stats.personalEmail} of {stats.total} used a personal email address.
+              </p>
+            </div>
+            <div className="rounded-md border border-line bg-raised p-4">
+              <p className="t-id mb-2 text-soft">TOP SOURCES</p>
+              <ul className="m-0 grid list-none gap-1 p-0 text-[13px]">
+                {stats.sources.map((row) => (
+                  <li key={row.source} className="flex justify-between gap-4 text-ink">
+                    <span className="truncate">{row.source}</span>
+                    <span className="t-metric">{row.signups}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </section>
+      )}
+
+      <div className="mx-auto w-full max-w-275 px-4 pb-16 sm:px-6">
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="t-label text-soft">Signups</h2>
           <button
-            onClick={() => fetchEntries(token)}
+            type="button"
+            onClick={() => void fetchEntries(token.trim())}
             disabled={loading}
-            className="text-xs text-[#587cff] hover:underline cursor-pointer"
+            className="t-ui cursor-pointer bg-transparent text-teal underline"
           >
             {loading ? "Refreshing…" : "Refresh"}
           </button>
         </div>
 
-        <div className="flex flex-col gap-3">
+        <ul className="m-0 grid list-none gap-3 p-0">
           {entries.map((entry) => (
-            <EntryCard key={entry._id} entry={entry} expanded={expanded} toggleExpand={toggleExpand} />
+            <EntryCard
+              key={entry._id}
+              entry={entry}
+              open={expanded.has(entry._id)}
+              toggle={() => toggleExpand(entry._id)}
+            />
           ))}
-        </div>
+        </ul>
 
         {entries.length === 0 && !loading && (
-          <p className="text-center text-sm text-[#3a3f55] py-16">No signups yet.</p>
+          <p className="py-16 text-center text-[14px] text-soft">No signups yet.</p>
         )}
       </div>
-    </div>
+    </main>
   );
 }
 
-function EntryCard({ entry, expanded, toggleExpand }: Readonly<{ entry: WaitlistEntry, expanded: Set<string>, toggleExpand: (id: string) => void }>) {
-  const isOpen = expanded.has(entry._id);
+function EntryCard({
+  entry,
+  open,
+  toggle,
+}: Readonly<{ entry: WaitlistEntry; open: boolean; toggle: () => void }>) {
+  const panelId = `entry-${entry._id}`;
+  const source = [entry.utmSource, entry.utmMedium, entry.utmCampaign].filter(Boolean).join(" / ");
+
   return (
-    <motion.div
-      layout
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-      className="rounded-xl border border-[#1a1f35] bg-[#111627] overflow-hidden"
-    >
+    <li className="overflow-hidden rounded-md border border-line bg-raised">
       <button
-        onClick={() => toggleExpand(entry._id)}
-        className="w-full text-left px-5 py-4 flex items-center gap-4 cursor-pointer hover:bg-[#111627]/80 transition-colors"
+        type="button"
+        onClick={toggle}
+        aria-expanded={open}
+        aria-controls={panelId}
+        className="flex w-full cursor-pointer items-center gap-4 bg-transparent p-4 text-left text-ink"
       >
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-semibold text-white truncate">
-              {entry.firstName} {entry.lastName}
+        <span className="min-w-0 flex-1">
+          <span className="flex flex-wrap items-center gap-2">
+            <span className="truncate text-[14px] font-semibold">
+              {entry.firstName || entry.lastName
+                ? `${entry.firstName} ${entry.lastName}`.trim()
+                : "Email only"}
             </span>
-            <span className="text-[0.65rem] px-2 py-0.5 rounded-full bg-[rgba(88,124,255,0.1)] text-[#7b98ff] font-medium">
-              {interestLabels[entry.interest] || entry.interest}
+            <span className="rounded-sm bg-teal-soft px-2 py-0.5 text-[11px] font-semibold text-ink">
+              {interestLabels[entry.interest] ?? entry.interest}
             </span>
-          </div>
-          <p className="text-xs text-[#6e7388] mt-0.5 truncate">
-            {entry.email}{entry.orgName ? ` · ${entry.orgName}` : ""}
-          </p>
-        </div>
-        <span className="text-[0.68rem] text-[#3a3f55] whitespace-nowrap">
-          {new Date(entry.createdAt).toLocaleDateString("en-GB", {
-            day: "numeric",
-            month: "short",
-          })}
+            {!entry.profileCompletedAt && (
+              <span className="rounded-sm border border-line px-2 py-0.5 text-[11px] text-soft">
+                Stopped at step 1
+              </span>
+            )}
+          </span>
+          <span className="mt-0.5 block truncate text-[13px] text-soft">
+            {entry.email}
+            {entry.orgName ? ` · ${entry.orgName}` : ""}
+          </span>
         </span>
-        <motion.span
-          animate={{ rotate: isOpen ? 180 : 0 }}
-          className="text-[#6e7388] text-xs"
-        >
-          ▼
-        </motion.span>
+        <span className="t-id whitespace-nowrap text-soft">
+          {new Date(entry.createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}
+        </span>
+        <ChevronDown
+          size={16}
+          strokeWidth={1.75}
+          className={`shrink-0 text-soft transition-transform duration-150 ${open ? "rotate-180" : ""}`}
+          aria-hidden="true"
+        />
       </button>
 
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            className="overflow-hidden"
-          >
-            <div className="px-5 pb-5 grid grid-cols-2 gap-x-8 gap-y-2 text-xs border-t border-[#1a1f35] pt-4 mx-5">
-              <Value label="Email" value={entry.email} />
-              <Value label="Organisation" value={entry.orgName || "—"} />
-              <Value label="Job title" value={entry.jobTitle || "—"} />
-              <Value label="Industry" value={entry.industry || "—"} />
-              <Value label="Frameworks" value={entry.frameworks.join(", ") || "—"} />
-              <Value label="Signed up" value={new Date(entry.createdAt).toLocaleString()} />
-              {entry.painPoints && (
-                <div className="col-span-2 mt-2">
-                  <span className="text-[#3a3f55]">Pain points</span>
-                  <p className="text-[#b4bac8] mt-1 italic leading-relaxed">{entry.painPoints}</p>
-                </div>
-              )}
+      {open && (
+        <div
+          id={panelId}
+          className="mx-4 grid grid-cols-1 gap-x-8 gap-y-3 border-t border-line py-4 text-[13px] sm:grid-cols-2"
+        >
+          <Value
+            label="Email"
+            value={entry.freeEmailDomain ? `${entry.email} (personal address)` : entry.email}
+          />
+          <Value label="Organisation" value={entry.orgName} />
+          <Value label="Role" value={entry.jobTitle} />
+          <Value label="Industry" value={entry.industry} />
+          <Value label="Framework" value={entry.frameworks.join(", ")} />
+          <Value label="Source" value={source} />
+          <Value label="Referrer" value={entry.referrer} />
+          <Value label="Confirmation sent" value={entry.confirmationSent ? "Yes" : "No"} />
+          <Value label="Consent given" value={new Date(entry.consentedAt).toLocaleString("en-GB")} />
+          <Value label="Signed up" value={new Date(entry.createdAt).toLocaleString("en-GB")} />
+          {entry.painPoints && (
+            <div className="sm:col-span-2">
+              <p className="t-id text-soft">SLOWS REVIEWS</p>
+              <p className="mt-1 whitespace-pre-wrap text-ink">{entry.painPoints}</p>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.div>
+          )}
+        </div>
+      )}
+    </li>
   );
 }
 
-function StatCard({
-  label,
-  value,
-  color,
-  emoji,
-}: Readonly<{
-  label: string;
-  value: number;
-  color?: string;
-  emoji?: string;
-}>) {
+function Stat({ label, value }: Readonly<{ label: string; value: number }>) {
   return (
-    <div className="p-5 rounded-xl border border-[#1a1f35] bg-[#111627]">
-      <p className="text-[0.68rem] text-[#6e7388] uppercase tracking-wider mb-1">
-        {emoji ? `${emoji} ` : ""}{label}
-      </p>
-      <p className="text-2xl font-extrabold text-white tracking-[-0.02em]" style={{ color: color || "#fff" }}>
-        {value}
-      </p>
+    <div className="rounded-md border border-line bg-raised p-4">
+      <dt className="t-id mb-1 text-soft">{label.toUpperCase()}</dt>
+      <dd className="t-metric m-0 text-2xl text-ink">{value}</dd>
     </div>
   );
 }
 
-function Value({ label, value }: Readonly<{ label: string; value: React.ReactNode }>) {
+function Value({ label, value }: Readonly<{ label: string; value?: string }>) {
   return (
     <div>
-      <span className="text-[#3a3f55]">{label}</span>
-      <p className="text-[#b4bac8] mt-0.5 break-all">{value}</p>
+      <p className="t-id text-soft">{label.toUpperCase()}</p>
+      <p className="mt-0.5 break-all text-ink">{value || "-"}</p>
     </div>
   );
 }
