@@ -1,66 +1,48 @@
-"use client";
-
-import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
+import GateMark from "@/components/GateMark";
 import ThemeToggle from "@/components/ThemeToggle";
 
+const links = [
+  { href: "#how", label: "How it works" },
+  { href: "#evidence", label: "Evidence" },
+  { href: "#trust", label: "Trust" },
+  { href: "#faq", label: "FAQ" },
+];
+
 export default function TopBar() {
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
   return (
-    <motion.header
-      initial={{ y: -20, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] as const }}
-      className="fixed top-0 inset-x-0 z-50 transition-all duration-300"
-      style={
-        scrolled
-          ? {
-              backgroundColor: "color-mix(in srgb, var(--ink) 80%, transparent)",
-              backdropFilter: "blur(20px)",
-              WebkitBackdropFilter: "blur(20px)",
-              borderBottom: "1px solid var(--border-dim)",
-            }
-          : {}
-      }
-    >
-      <div className="max-w-7xl mx-auto flex items-center justify-between px-4 sm:px-6 py-5">
-        {/* Logo */}
-        <motion.a
-          href="#"
-          className="flex items-center gap-2.5 font-bold text-2xl sm:text-[2.05rem] tracking-[-0.02em] no-underline whitespace-nowrap"
-          style={{ color: "var(--text)" }}
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
+    <header className="sticky top-0 z-50 border-b border-line bg-paper">
+      <div className="mx-auto flex w-full max-w-275 items-center justify-between gap-4 px-4 py-3 sm:px-6">
+        <a
+          href="#top"
+          className="flex items-center gap-2.5 text-ink no-underline hover:text-ink"
+          aria-label="ArchitectureAI, back to top"
         >
-          ArchitectureAI
-        </motion.a>
+          <GateMark size={28} />
+          <span className="text-lg font-bold tracking-tight">
+            ArchitectureAI
+          </span>
+        </a>
 
-        {/* Right side: CTA + theme toggle */}
-        <div className="flex items-center gap-3">
-          <motion.a
-            href="#signup"
-            className="hidden sm:inline-flex px-4 py-2 rounded-full border text-sm font-medium transition-all duration-200 no-underline whitespace-nowrap"
-            style={{
-              borderColor: "var(--border)",
-              color: "var(--text-soft)",
-              background: "color-mix(in srgb, var(--surface) 30%, transparent)",
-            }}
-            whileHover={{ scale: 1.03, borderColor: "var(--accent-lit)", color: "var(--text)", background: "color-mix(in srgb, var(--accent) 8%, transparent)" }}
-            whileTap={{ scale: 0.97 }}
-          >
-            Stay in the loop
-          </motion.a>
+        <nav aria-label="Main" className="hidden items-center gap-6 md:flex">
+          {links.map((link) => (
+            <a
+              key={link.href}
+              href={link.href}
+              className="t-ui text-soft no-underline hover:text-ink"
+            >
+              {link.label}
+            </a>
+          ))}
+        </nav>
 
+        <div className="flex items-center gap-2">
+          <a href="#join" className="btn btn-primary">
+            <span className="sm:hidden">Join</span>
+            <span className="hidden sm:inline">Join Waitlist</span>
+          </a>
           <ThemeToggle />
         </div>
       </div>
-    </motion.header>
+    </header>
   );
 }
