@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Lockup from "@/components/Lockup";
+import { site } from "@/lib/site";
 
 export default function Footer() {
   const contact = process.env.NEXT_PUBLIC_CONTACT_EMAIL;
@@ -10,7 +11,7 @@ export default function Footer() {
         <div className="flex flex-col items-start gap-3">
           <Lockup size={32} />
           <p className="text-[13px] text-soft">
-            Intelligence for complex systems.
+            {site.tagline}
           </p>
         </div>
 

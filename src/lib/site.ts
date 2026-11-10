@@ -10,12 +10,14 @@
 export const site = {
   name: "ArchitectureAI",
   url: process.env.NEXT_PUBLIC_URL ?? "https://www.architectureai.tech",
+  /* Brand v1.4 primary tagline (site hero, deck cover). */
   tagline: "Intelligence for complex systems.",
-  title: "ArchitectureAI: enterprise architecture, with evidence",
-  /* Search result snippet. Keep under about 155 characters so it does not truncate. */
+  /* Brand v1.4 category line. */
+  title: "ArchitectureAI: AI-native Enterprise Architecture platform",
+  /* Search result snippet, from the brand v1.4 value proposition. Keep under about 155 characters so it does not truncate. */
   description:
-    "Review architecture documents, diagrams, models and practices against TOGAF, ArchiMate, Zachman and your own standards, with evidence. Waitlist open.",
-  /* Link previews (LinkedIn, X, Slack). Room for the audience and the offer. */
+    "Reviews architecture diagrams and documents against frameworks like TOGAF, surfaces risks and gaps, and shows the evidence behind every finding.",
+  /* Link previews (LinkedIn, X, Slack): long-form tagline plus the value proposition. */
   shareDescription:
-    "AI-native enterprise architecture for all industries. Review against TOGAF, ArchiMate, Zachman and your own standards, with evidence for every finding. Waitlist open.",
+    "Clarity for complex systems. Evidence for every decision. ArchitectureAI reviews architecture diagrams and documents against frameworks like TOGAF and shows the evidence behind every finding. Waitlist open.",
 } as const;

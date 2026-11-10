@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import { site } from "@/lib/site";
 
 const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY)
@@ -113,7 +114,7 @@ function shell(inner: string): string {
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;margin:0 auto">
   <tr><td style="padding-bottom:20px;font-size:16px;font-weight:700;letter-spacing:-0.01em;color:${C.ink}">Architecture<span style="color:${C.teal}">AI</span></td></tr>
   <tr><td style="background:${C.raised};border:1px solid ${C.line};border-radius:8px;padding:28px">${inner}</td></tr>
-  <tr><td style="padding-top:20px;font-size:12px;color:${C.soft}">Intelligence for complex systems.</td></tr>
+  <tr><td style="padding-top:20px;font-size:12px;color:${C.soft}">${site.tagline}</td></tr>
 </table>
 </body>
 </html>`;
