@@ -111,7 +111,7 @@ function shell(inner: string): string {
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark light"></head>
 <body style="margin:0;padding:32px 16px;background:${C.paper};color:${C.ink};font-family:Geist,Inter,system-ui,-apple-system,'Segoe UI',sans-serif;font-size:15px;line-height:1.55">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;margin:0 auto">
-  <tr><td style="padding-bottom:20px;font-size:16px;font-weight:700;letter-spacing:-0.01em;color:${C.ink}">ArchitectureAI</td></tr>
+  <tr><td style="padding-bottom:20px;font-size:16px;font-weight:700;letter-spacing:-0.01em;color:${C.ink}">Architecture<span style="color:${C.teal}">AI</span></td></tr>
   <tr><td style="background:${C.raised};border:1px solid ${C.line};border-radius:8px;padding:28px">${inner}</td></tr>
   <tr><td style="padding-top:20px;font-size:12px;color:${C.soft}">Intelligence for complex systems.</td></tr>
 </table>

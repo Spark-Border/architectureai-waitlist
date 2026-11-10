@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { ChevronDown } from "lucide-react";
-import GateMark from "@/components/GateMark";
+import Lockup from "@/components/Lockup";
 
 interface WaitlistEntry {
   _id: string;
@@ -123,9 +123,9 @@ export default function AdminPage() {
           onSubmit={handleLogin}
           className="w-full max-w-sm rounded-md border border-line bg-raised p-8"
         >
-          <div className="mb-6 flex items-center gap-2.5 text-ink">
-            <GateMark size={24} />
-            <h1 className="text-lg font-bold tracking-tight">Admin</h1>
+          <div className="mb-6 flex flex-col items-start gap-3">
+            <Lockup size={32} />
+            <h1 className="text-lg font-bold tracking-tight text-ink">Admin</h1>
           </div>
           <label htmlFor="admin-password" className="t-ui mb-1.5 block text-ink">
             Password
@@ -160,10 +160,10 @@ export default function AdminPage() {
   return (
     <main className="min-h-screen bg-paper text-ink">
       <div className="mx-auto flex w-full max-w-275 items-center justify-between gap-4 border-b border-line px-4 py-6 sm:px-6">
-        <div className="flex items-center gap-2.5">
-          <GateMark size={24} />
-          <div>
-            <h1 className="text-lg font-bold tracking-tight">ArchitectureAI admin</h1>
+        <div className="flex items-center gap-6">
+          <Lockup size={32} />
+          <div className="border-l border-line pl-6">
+            <h1 className="text-lg font-bold tracking-tight">Admin</h1>
             <p className="t-metric text-soft">{stats?.total ?? 0} signups</p>
           </div>
         </div>

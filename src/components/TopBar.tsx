@@ -1,4 +1,4 @@
-import GateMark from "@/components/GateMark";
+import Lockup from "@/components/Lockup";
 import ThemeToggle from "@/components/ThemeToggle";
 
 const links = [
@@ -14,13 +14,10 @@ export default function TopBar() {
       <div className="mx-auto flex w-full max-w-275 items-center justify-between gap-4 px-4 py-3 sm:px-6">
         <a
           href="#top"
-          className="flex items-center gap-2.5 text-ink no-underline hover:text-ink"
+          className="flex items-center no-underline"
           aria-label="ArchitectureAI, back to top"
         >
-          <GateMark size={28} />
-          <span className="text-lg font-bold tracking-tight">
-            ArchitectureAI
-          </span>
+          <Lockup size={36} />
         </a>
 
         <nav aria-label="Main" className="hidden items-center gap-6 md:flex">
